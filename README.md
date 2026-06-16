@@ -15,5 +15,5 @@ The app will be minimized to the bottom right corner. Right-click on it to displ
 
 The script will create a group each time it is launched on the account, and this group will be customized.
 
-# **WARNING: DO NOT OPEN THE APP TWICE, OR YOU WILL GET A BLUE SCREEN.
-I AM CURRENTLY ADDRESSING THIS ISSUE!**
+# WARNING: DO NOT OPEN THE APP TWICE, OR YOU WILL GET A BLUE SCREEN.
+**I AM CURRENTLY ADDRESSING THIS ISSUE!**
