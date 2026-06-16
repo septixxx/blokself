@@ -185,7 +185,7 @@ class BlokselfBot(discord.Client):
             return discord.Activity(type=discord.ActivityType.watching, name=name)
         elif ptype == "play":
             return discord.Activity(type=discord.ActivityType.playing, name=name)
-        else:  # stream (default)
+        else:  
             return discord.Streaming(name=name, url=url)
 
 
@@ -729,7 +729,7 @@ class BlokselfBot(discord.Client):
 
             return
 
-        # Skip auto-react and auto-delete for system messages (group rename, member add/remove…)
+        
         if message.type not in (discord.MessageType.default, discord.MessageType.reply):
             return
 
