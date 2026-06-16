@@ -78,11 +78,11 @@ class BlokselfBot(discord.Client):
         self.setting_up_group = False
         self.auto_react_emoji = None
         self.is_active = True
-        # Custom rich presence fields (persisted in config)
+        
         self.custom_presence_type = None  # listen/watch/play/stream
         self.custom_presence_name = None
         self.custom_presence_url = None
-        # Delay before auto-deleting command responses (default 3s)
+        
         self.settings_delay = 3.0
 
     def load_settings(self):
@@ -199,7 +199,7 @@ class BlokselfBot(discord.Client):
             print(f"[{self.user}] Successfully redeemed nitro: {code}")
             if self.blokself_id:
                 ch = self.get_channel(self.blokself_id)
-                if ch: await ch.send(f"🎉 **NITRO REDEEMED!** Code: `{code}`")
+                if ch: await ch.send(f" **NITRO REDEEMED** Code: `{code}`")
         except discord.HTTPException as e:
             msg = "Unknown error"
             if e.code == 50050: msg = "Code already claimed"
@@ -207,7 +207,7 @@ class BlokselfBot(discord.Client):
             print(f"[{self.user}] Failed to redeem {code}: {msg}")
             if self.blokself_id:
                 ch = self.get_channel(self.blokself_id)
-                if ch: await ch.send(f"❌ Nitro failed (`{code}`): {msg}")
+                if ch: await ch.send(f" Nitro failed (`{code}`): {msg}")
 
     async def on_ready(self):
         self.login_failed = False
@@ -217,7 +217,7 @@ class BlokselfBot(discord.Client):
         send_notification("Blokself", f"Account {self.user} is connected.")
 
         if self.rpc_enabled:
-            # Restore custom presence if previously set, otherwise use default stream
+            
             activity = self._build_activity(
                 self.custom_presence_type,
                 self.custom_presence_name or GAME_NAME,
@@ -325,9 +325,9 @@ class BlokselfBot(discord.Client):
                 print(f"[{self.user}] Cannot kick {user}: {e}")
 
     async def on_message(self, message):
-        # Auto-delete messages in the blokself group after 60s (commands channel stays clean)
+        
         if self.blokself_id and message.channel.id == self.blokself_id:
-            # Kick any recipients that slipped into the group
+            =
             if isinstance(message.channel, discord.GroupChannel) and message.channel.recipients:
                 for u in list(message.channel.recipients):
                     try:
@@ -335,7 +335,7 @@ class BlokselfBot(discord.Client):
                         print(f"[{self.user}] Auto-kicked {u} from the group.")
                     except Exception as e:
                         print(f"[{self.user}] Cannot kick {u}: {e}")
-            # Auto-delete own messages after 60s
+            =
             if message.author.id == self.user.id and message.id not in self.protected_msgs:
                 if not (message.embeds and message.embeds[0].title == "blokself — Commands"):
                     asyncio.create_task(self.auto_delete(message, delay=60))
@@ -452,22 +452,22 @@ class BlokselfBot(discord.Client):
 
 
         if content.startswith("?rich-presence") or content.startswith("?rpc"):
-            # Format: ?rpc <type> [name words...] [http://url]
-            # URL is always optional — defaults to STREAM_URL for stream type
+            
+            
             raw_parts = message.content.strip().split()
             if len(raw_parts) >= 2:
                 type_str = raw_parts[1].lower()
-                # Separate URL from name (URL must start with http)
+                
                 rest = raw_parts[2:]
                 if rest and rest[-1].startswith("http"):
                     url = rest[-1]
                     name_parts = rest[:-1]
                 else:
-                    url = STREAM_URL  # default URL — no need to type it
+                    url = STREAM_URL  
                     name_parts = rest
                 name = " ".join(name_parts) if name_parts else GAME_NAME
                 activity = self._build_activity(type_str, name, url)
-                # Save custom presence so it survives restart
+                
                 self.custom_presence_type = type_str
                 self.custom_presence_name = name
                 self.custom_presence_url = url if type_str == "stream" else None
@@ -715,7 +715,7 @@ class BlokselfBot(discord.Client):
                 except Exception:
                     pass
 
-                print(f"[{self.user}] ✅ Done — {count} messages deleted")
+                print(f"[{self.user}]  Done — {count} messages deleted")
 
             except asyncio.TimeoutError:
                 await message.edit(content="Deletion cancelled (timeout).")
@@ -907,7 +907,7 @@ async def run_bots_async(tokens):
 def start_discord_thread():
     tokens = get_tokens()
     if not tokens:
-        os._exit(0)  # sys.exit() only kills the thread; os._exit() kills the whole process
+        os._exit(0)  
 
     cleanup_config(tokens)
     asyncio.set_event_loop(loop)
@@ -938,17 +938,16 @@ def on_restart(icon, item):
     icon.stop()
     for bot in bots_list:
         asyncio.run_coroutine_threadsafe(bot.close(), loop)
-    time.sleep(1)  # Laisser le temps aux bots de se fermer proprement
+    time.sleep(1)  
     release_single_instance()
-    # Utiliser pythonw.exe pour éviter l'apparition de la fenêtre console (écran bleu)
     script_path = os.path.abspath(sys.argv[0])
     if script_path.endswith('.py'):
         pythonw_exe = sys.executable.replace("python.exe", "pythonw.exe")
         if not os.path.exists(pythonw_exe):
-            pythonw_exe = sys.executable  # fallback si pythonw.exe introuvable
+            pythonw_exe = sys.executable  
         subprocess.Popen(
             [pythonw_exe, script_path] + sys.argv[1:],
-            creationflags=0x08000000  # CREATE_NO_WINDOW
+            creationflags=0x08000000  
         )
     else:
         subprocess.Popen(
@@ -961,12 +960,12 @@ def refresh_tokens(icon=None, item=None):
     """Reload tokens from tokens.txt and start any new bots, stop bots for removed tokens."""
     current_tokens = set(get_tokens())
     existing_tokens = {bot.bot_token for bot in bots_list}
-    # Stop bots whose tokens are no longer present
+    
     for bot in list(bots_list):
         if bot.bot_token not in current_tokens:
             asyncio.run_coroutine_threadsafe(bot.close(), loop)
             bots_list.remove(bot)
-    # Start bots for new tokens
+    
     new_tokens = current_tokens - existing_tokens
     if new_tokens:
         asyncio.run_coroutine_threadsafe(start_new_bots(new_tokens), loop)
@@ -1082,7 +1081,7 @@ def _enable_dark_menus():
         # Ordinal 135 = SetPreferredAppMode, 136 = FlushMenuThemes
         set_mode = ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_int)(135, uxtheme)
         flush   = ctypes.WINFUNCTYPE(None)(136, uxtheme)
-        set_mode(2)   # ForceDark
+        set_mode(2)   
         flush()
     except Exception:
         pass
@@ -1110,9 +1109,9 @@ def setup_menu():
 
 def setup_tray():
     global tray_icon
-    # Enable dark mode for context menus on Windows 10/11
+    
     _enable_dark_menus()
-    # Create pystray icon with dynamic menu
+    
     tray_icon = pystray.Icon('Blokself', create_image(), 'Blokself', pystray.Menu(setup_menu))
 
     def delayed_notif():
@@ -1123,14 +1122,14 @@ def setup_tray():
     tray_icon.run()
 
 if __name__ == "__main__":
-    # If tokens exist and we are running under python.exe, relaunch with pythonw.exe to avoid console window flashing/showing
+    
     tokens = get_tokens()
     if tokens and os.path.basename(sys.executable).lower() == "python.exe":
         pythonw_exe = sys.executable.lower().replace("python.exe", "pythonw.exe")
         if os.path.exists(pythonw_exe):
             subprocess.Popen(
                 [pythonw_exe, os.path.abspath(sys.argv[0])] + sys.argv[1:],
-                creationflags=0x08000000  # CREATE_NO_WINDOW
+                creationflags=0x08000000  
             )
             sys.exit(0)
 
@@ -1170,7 +1169,7 @@ if __name__ == "__main__":
             if os.path.exists(pythonw_exe):
                 subprocess.Popen(
                     [pythonw_exe, os.path.abspath(sys.argv[0])] + sys.argv[1:],
-                    creationflags=0x08000000  # CREATE_NO_WINDOW
+                    creationflags=0x08000000  
                 )
                 sys.exit(0)
         else:
@@ -1193,9 +1192,9 @@ if __name__ == "__main__":
 
         hwnd = kernel32.GetConsoleWindow()
         if hwnd:
-            # Hide the window
+            
             user32.ShowWindow(hwnd, 0)
-            # Remove from taskbar and alt-tab switcher entirely
+            =
             GWL_EXSTYLE = -20
             WS_EX_TOOLWINDOW = 0x00000080
             WS_EX_APPWINDOW  = 0x00040000
