@@ -8,8 +8,7 @@ https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe
 - Download the folder here
 - Extract the file and open a cmd in the file
 - Write: pip install -r requirements.txt
-
-Open blokself.py and write your token, press enter
+- Open blokself.py and write your token, press enter
 
 The app will be minimized to the bottom right corner. Right-click on it to display the options.
 
